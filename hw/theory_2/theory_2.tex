@@ -1,0 +1,70 @@
+\documentclass[unicode]{article}
+
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage[colorlinks,urlcolor=blue]{hyperref}
+\usepackage{import}
+
+\textheight=24cm
+\textwidth=18cm
+\oddsidemargin=-1cm
+\topmargin=-2.5cm
+\sloppy
+
+\newcounter{example}
+
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+{\mbox{\boldmath$\textstyle#1$}} {\mbox{\boldmath$\scriptstyle#1$}} {\mbox{\boldmath$\scriptscriptstyle#1$}}}
+
+\newcommand{\tr}{\mathop{\mathrm{tr}}\limits}
+
+\DeclareMathOperator{\R}{U}
+\DeclareMathOperator{\B}{Beta}
+\DeclareMathOperator{\Par}{Pareto}
+
+\renewcommand{\labelitemi}{$-$}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    \begin{tabular}{|p{17.5cm}|}
+        \hline
+        \begin{center} \Large Теория 2. Матричные вычисления\end{center}\\
+        \textbf{Курс: Байесовские методы в машинном обучении, осень 2019}\\
+        \hline
+    \end{tabular}
+\end{center}
+
+\begin{enumerate}
+    \item Доказать тождество Вудбери:
+        $$
+            (A+UCV)^{-1} = A^{-1} - A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1}.
+        $$
+        Здесь $A\in\mathbb{R}^{n{\times}n}$, $C\in\mathbb{R}^{m{\times}m}$, $U\in\mathbb{R}^{n{\times}m}$, $V\in\mathbb{R}^{m{\times}n}$.
+  	\import{./}{task1.tex}
+  	        
+    \item Пусть $p(\vec{x}) = \mathcal{N}(\vec{x}|\vec{\mu},\Sigma)$, $p(\vec{y}|\vec{x}) = \mathcal{N}(\vec{y}|A\vec{x},\Gamma)$, $A\in\mathbb{R}^{m{\times}n}$. Найти распределение $p(\vec{x}|\vec{y})$.
+    %\item Вычислить $\mathbb{E}_{\mathcal{N}(\vec{x}|\vec{\mu},\Sigma)}(\vec{x}-\vec{a})^TB(\vec{x}-\vec{a})$;
+  	\import{./}{task2.tex}
+  	    
+    \item Пусть $p(\vec{x}) = \mathcal{N}(\vec{x}|\vec{\mu},\Sigma)$, $p(\vec{y}|\vec{x}) = \mathcal{N}(\vec{y}|A\vec{x},\Gamma)$. Доказать, что $p(\vec{y}) = \mathcal{N}(\vec{y}|A\vec{\mu},\Gamma+A\Sigma A^T)$.
+  	\import{./}{task3.tex}
+  	
+    \item Вычислить $\frac{\partial}{\partial X}\det(X^{-1}+A)$ (все матрицы не являются симметричными);
+    
+  	\import{./}{task4.tex}
+    
+    \item Вычислить $\frac{\partial}{\partial X}\tr(AX^{-T}BXC)$ (все матрицы не являются симметричными, матрицы $A,C$ не являютяс квадратными).
+	
+	\import{./}{task5.tex}
+\end{enumerate}
+
+
+\end{document}

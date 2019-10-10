@@ -1,0 +1,68 @@
+\begin{gather*}
+\int p(y|x)p(x)dx = C_1 C_2 \int \exp \bigg[ -\frac{1}{2} \Big(
+(y-Ax)^T \Gamma^{-1} (y-Ax) + (x-\mu)^T \Sigma^{-1} (x-\mu)
+\Big) \bigg] dx
+\end{gather*}
+
+Рассмотрим выражение под экспонентой
+
+\begin{gather*}
+	(y-Ax)^T \Gamma^{-1} (y-Ax) + (x-\mu)^T \Sigma^{-1} (x-\mu) = \\
+	x^T \Sigma^{-1} x + x^TA^T \Gamma^{-1} Ax - x^T A^T \Gamma^{-1} y - y^T \Gamma^{-1} A x - \mu^T \Sigma^{-1} x - x^T \Sigma^{-1} \mu + y^T \Gamma^{-1} y + \mu^T \Sigma^{-1} \mu = \\
+	x^T (\Sigma^{-1} + A^T \Gamma^{-1} A) x - x^T ( A^T \Gamma^{-1} y + \Sigma^{-1} \mu ) - (y^T \Gamma^{-1} A + \mu^T \Sigma^{-1}) x + y^T \Gamma^{-1} y + \mu^T \Sigma^{-1} \mu \\
+\end{gather*}
+
+Логично предположить, что выражение в скобках под экспонентой является квадратичной формой по x, так же как и по y. Выделим квадратичную форму по x и проинтегрируем.
+
+\begin{gather*}
+	(x-k)^T K^{-1} (x-k) + \gamma = x^T K^{-1} x - k^T K^{-1} x - x^T K^{-1} k + k^T K^{-1} k + \gamma = \text{выражение выше} \\
+	\gamma + k^T K^{-1} k = y^T \Gamma^{-1} y + \mu^T \Sigma^{-1} \mu \\
+	x^T K^{-1} x - k^T K^{-1} x - x^T K^{-1} k = x^T (\Sigma^{-1} + A^T \Gamma^{-1} A) x - x^T ( A^T \Gamma^{-1} y + \Sigma^{-1} \mu ) - (y^T \Gamma^{-1} A + \mu^T \Sigma^{-1}) x
+\end{gather*}
+
+Отсюда
+
+\begin{gather*}
+	K = (\Sigma^{-1} + A^T \Gamma^{-1} A )^{-1} \\
+	K^{-1} k = A^T \Gamma^{-1} y + \Sigma^{-1} \mu \\
+	k =  (\Sigma^{-1} + A^T \Gamma^{-1} A )^{-1} (A^T \Gamma^{-1} y + \Sigma^{-1} \mu) \\
+	\gamma = - k^T K^{-1} k + y^T \Gamma^{-1} y + \mu^T \Sigma^{-1} \mu = \\
+	y^T \Gamma^{-1} y + \mu^T \Sigma^{-1} \mu - (\Sigma^{-1} \mu + A^T \Gamma^{-1} y)^T (\Sigma^{-1} + A^T \Gamma^{-1} A)^{-T} (\Sigma^{-1} \mu + A^T \Gamma^{-1} y) = \\
+	y^T \Gamma y - y^T \Gamma^{-1} A (\Sigma^{-1} + A^T \Gamma^{-1} A)^{-1} A^T \Gamma^{-1} y - y^T \Gamma^{-1} A (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1} \Sigma^{-1} \mu - \\ 
+	\mu^T \Sigma^{-1} (\Sigma^{-1}+A^T \Gamma^{-1}A)^{-1}A^T \Gamma^{-1} y + ...
+\end{gather*}
+
+Выразим также квадратичную форму по y
+
+\begin{gather*}
+	(y-v)^T Y^{-1} (y-v) = y^T Y^{-1} y - y^T Y^{-1} v v^T Y^{-1} y + v^T Y^{-1} v = \text{выражение выше}
+\end{gather*}
+
+Отсюда 
+
+\begin{gather*}
+	Y^{-1} = \Gamma^{-1} - \Gamma^{-1} A (\Sigma^{-1} + A^T\Gamma^{-1}A)^{-1}A^T\Gamma^{-1} = \Big| \text{тождество Вудбери}, \ A = \Sigma^{-1}, U=A^T, C=\Gamma^{-1}, V = A \Big| = \\
+	(\Gamma + A \Sigma A^T)^{-1} \\
+	\text{т.е.} \ Y = \Gamma + A \Sigma A^T \\
+	Y^{-1}v = \Gamma^{-1}A(\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1}\Sigma^{-1}\mu \\
+	v = (\Gamma + A \Sigma A^T) \Gamma^{-1}A(\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1}\Sigma^{-1}\mu = \\
+	(A + A \Sigma A^T \Gamma^{-1} A) (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1}\Sigma^{-1}\mu = \\
+	A \Sigma (\Sigma^{-1} + A^T \Gamma^{-1} A) (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1}\Sigma^{-1}\mu = \\
+	A \mu
+\end{gather*}
+
+Отсюда, с точностью до констант, получаем выражение в скобках под экспонентой
+
+\begin{gather*}
+	(y-v)^T Y^{-1} (y-v) + (x-k)^T K^{-1} (x-k) 
+\end{gather*}
+
+Тогда общее выражение выглядит следующим образом:
+
+\begin{gather*}
+	p(y) = \int p(y|x) p(x) dx = C \int exp \bigg[ -\frac{1}{2}\Big( (y-v)^T Y^{-1} (y-v) + (x-k)^T K^{-1} (x-k) \Big) \bigg] dx = \\
+	\hat{C} exp \bigg[ -\frac{1}{2} (y-v)^T Y^{-1} (y-v) \bigg] = \\
+	\mathcal{N} (y | v, Y) = \mathcal{N} (y| A\mu , \Gamma + A \Sigma A^T)
+\end{gather*}
+
+Доказано.

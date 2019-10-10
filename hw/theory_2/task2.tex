@@ -1,0 +1,17 @@
+\begin{gather*}
+	p(x|y) = p(y|x) p(x) / p(y)
+\end{gather*}
+
+Также как и в ттретьей задаче получаем, что выражение в скобках под экспонентой является квадратичной формой относительно x, при этом 
+
+\begin{gather*}
+	K = (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1} \\
+	k = (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1} (A^T \Gamma^{-1}y + \Sigma^{-1}\mu)
+\end{gather*}
+
+И соответственно 
+
+\begin{gather*}
+	p(x|y) = \mathcal{N} (x|k, K) = \\
+	\mathcal{N} (x|(\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1} (A^T \Gamma^{-1}y + \Sigma^{-1}\mu), (\Sigma^{-1}+A^T\Gamma^{-1}A)^{-1})
+\end{gather*}

@@ -1,0 +1,26 @@
+\begin{gather*}
+d(tr(AX^{-T}BXC)) = 
+tr(d(AX^{-T}BXC)) = \\
+tr\left\lbrace (d(AX^{-T}B))XC + AX^{-T}Bd(XC) \right\rbrace  = \\
+tr\left\lbrace A(dX^{-1})^TBXC + AX^{-T}B(dX)C \right\rbrace  = \\
+tr\left\lbrace -AX^{-T}(dX)^TX^{-T}BXC + AX^{-T}B(dX)C \right\rbrace  = \\
+-tr\left\lbrace X^{-T}BXCAX^{-T}(dX)^T \right\rbrace + \
+tr\left\lbrace CAX^{-T}BdX           \right\rbrace  = \\
+-tr\left\lbrace (X^{-T}BXCAX^{-T}(dX)^T)^T \right\rbrace + \
+tr\left\lbrace CAX^{-T}BdX           \right\rbrace  = \\
+-tr\left\lbrace (dX)X^{-1}A^TC^TX^TB^TX^{-1} \right\rbrace + \
+tr\left\lbrace CAX^{-T}BdX           \right\rbrace  = \\
+-tr\left\lbrace X^{-1}A^TC^TX^TB^TX^{-1}dX \right\rbrace + \
+tr\left\lbrace CAX^{-T}BdX           \right\rbrace  = \\
+tr\left\lbrace -X^{-1}A^TC^TX^TB^TX^{-1}dX + \
+CAX^{-T}BdX           \right\rbrace  = \\
+tr\left\lbrace \right(-X^{-1}A^TC^TX^TB^TX^{-1} + \
+CAX^{-T}B \left) dX           \right\rbrace  = \\
+\left< I_n, \right(-X^{-1}A^TC^TX^TB^TX^{-1} + \
+CAX^{-T}B \left) dX \right> = \\
+\left< \right(-X^{-1}A^TC^TX^TB^TX^{-1} + \
+CAX^{-T}B \left)^T, dX \right> = \\
+\left< B^TX^{-1}A^TC^T - X^{-T}BXCAX^{-T} , dX \right> \\
+\rightarrow \quad \dfrac{\partial}{\partial X} tr(AX^{-T}BXC) = \
+B^TX^{-1}A^TC^T - X^{-T}BXCAX^{-T}
+\end{gather*}

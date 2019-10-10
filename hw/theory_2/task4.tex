@@ -1,0 +1,8 @@
+\begin{gather*}
+\partial (det(X^{-1}+A)) = \bigg\| \partial(detX) = detX \cdot tr(X^{-1}\partial X) \bigg\| = det(X^{-1}+A) \cdot tr\big( (X^{-1}+A)^{-1}  \partial (X^{-1} + A) \big) \\ = det(X^{-1}+A) \cdot tr\big( (X^{-1}+A)^{-1}  \partial (X^{-1}) \big)
+\\ = - det(X^{-1}+A) \cdot tr\big( (X^{-1}+A)^{-1}  X^{-1} (\partial X) X^{-1} \big)
+\\ = - det(X^{-1}+A) \cdot tr\big( X^{-1} (X^{-1}+A)^{-1} X^{-1} \partial X \big)
+\\ = - det(X^{-1}+A) \cdot \big<I_n, X^{-1} (X^{-1}+A)^{-1} X^{-1} \partial X \big>
+\\ = - det(X^{-1}+A) \cdot \big<X^{-T} (X^{-1}+A)^{-T} X^{-T},  \partial X \big>
+\\ \rightarrow \dfrac{\partial}{\partial X} (det(X^{-1}+A)) = - det(X^{-1}+A) \cdot X^{-T} (X^{-1}+A)^{-T} X^{-T}
+\end{gather*}
