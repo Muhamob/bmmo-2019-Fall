@@ -1,0 +1,16 @@
+         100941 function calls (99441 primitive calls) in 3.785 seconds
+
+   Ordered by: cumulative time
+   List reduced from 185 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    3.785    3.785 {built-in method builtins.exec}
+        1    0.000    0.000    3.784    3.784 <string>:1(<module>)
+        1    0.004    0.004    3.784    3.784 <ipython-input-6-97d770e20ef1>:113(fit_rvr)
+     1000    0.057    0.000    3.594    0.004 <ipython-input-6-97d770e20ef1>:79(get_w_sigma)
+     1000    0.123    0.000    3.333    0.003 <ipython-input-6-97d770e20ef1>:62(get_covariance_matrix_optimized)
+     1000    0.066    0.000    2.462    0.002 <ipython-input-6-97d770e20ef1>:29(inversion_with_inf)
+7001/5501    0.175    0.000    2.444    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
+     1000    0.003    0.000    2.189    0.002 <__array_function__ internals>:2(inv)
+     1000    2.150    0.002    2.181    0.002 linalg.py:486(inv)
+      500    0.037    0.000    1.834    0.004 <ipython-input-6-97d770e20ef1>:93(update_alpha_beta)
