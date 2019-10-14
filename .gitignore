@@ -3,3 +3,7 @@
 *.out
 *.pdf
 *.synctex.gz
+
+# jupyter notebooks and python cache files
+**/.ipynb_checkpoints
+**/__pycache__
