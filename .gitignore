@@ -7,3 +7,5 @@
 # jupyter notebooks and python cache files
 **/.ipynb_checkpoints
 **/__pycache__
+
+.idea/
