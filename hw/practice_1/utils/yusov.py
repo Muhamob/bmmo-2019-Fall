@@ -75,7 +75,14 @@ def calculate_lower_bound(X, F, B, s, A, q, use_MAP=False):
     L : float
         The lower bound L(q,F,B,s,A) for the marginal log likelihood.
     """
-    pass
+    log_prior = np.expand_dims(np.log(A), axis=-1)
+    log_joint_distribution = calculate_log_probability(X, F, B, s) + log_prior
+
+    if not use_MAP:
+        elbo = np.sum(q * (log_joint_distribution - np.log(q)))
+        return elbo
+    else:
+        raise NotImplementedError()
 
 
 def run_e_step(X, F, B, s, A, use_MAP=False):
@@ -127,7 +134,7 @@ def run_e_step(X, F, B, s, A, use_MAP=False):
 
 def run_m_step(X, q, h, w, use_MAP=False):
     """
-    Estimates F,B,s,A given esitmate of posteriors defined by q.
+    Estimates F, B, s, A given estimate of posteriors defined by q.
 
     Parameters
     ----------
