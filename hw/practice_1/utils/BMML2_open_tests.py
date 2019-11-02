@@ -67,12 +67,12 @@ def check_m_step(use_MAP=False):
     H, W, K = 7, 8, 2
     h, w = 2, 3
     X, F, B, A, q = generate_data(H, W, K, h, w, use_MAP=use_MAP)
-
+    print(X.shape, F.shape, B.shape, A.shape, q.shape)
     pred_F, pred_B, pred_s, pred_A = \
         model.run_m_step(X, q, h, w, use_MAP=use_MAP)
 
-    assert_almost_equal(F, pred_F)
     assert_almost_equal(B, pred_B)
+    assert_almost_equal(F, pred_F)
 
 
 def check_e_step_time(use_MAP=False):
@@ -94,7 +94,7 @@ def check_m_step_time(use_MAP=False):
     t_start = time.perf_counter()
     model.run_m_step(X, q, h, w, use_MAP=use_MAP)
     computation_time = time.perf_counter() - t_start
-    assert computation_time < 1
+    assert computation_time < 1, f"{computation_time}"
 
 
 def test_output_shape():

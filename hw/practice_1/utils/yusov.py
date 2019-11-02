@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from scipy.signal import fftconvolve, correlate
 
 
 def calculate_log_probability(X, F, B, s):
@@ -49,17 +50,17 @@ def calculate_lower_bound(X, F, B, s, A, q, use_MAP=False):
 
     Parameters
     ----------
-    X : array, shape (H, W, K)
+    X : np.array, shape (H, W, K)
         K images of size H x W.
-    F : array, shape (h, w)
+    F : np.array, shape (h, w)
         Estimate of villain's face.
-    B : array, shape (H, W)
+    B : np.array, shape (H, W)
         Estimate of background.
     s : float
         Estimate of standard deviation of Gaussian noise.
-    A : array, shape (H-h+1, W-w+1)
+    A : np.array, shape (H-h+1, W-w+1)
         Estimate of prior on displacement of face in any image.
-    q : array
+    q : np.array
         If use_MAP = False: shape (H-h+1, W-w+1, K)
             q[dh,dw,k] - estimate of posterior of displacement (dh,dw)
             of villain's face given image Xk
@@ -75,11 +76,9 @@ def calculate_lower_bound(X, F, B, s, A, q, use_MAP=False):
     L : float
         The lower bound L(q,F,B,s,A) for the marginal log likelihood.
     """
-    log_prior = np.expand_dims(np.log(A), axis=-1)
-    log_joint_distribution = calculate_log_probability(X, F, B, s) + log_prior
+    elbo = np.sum(q*(calculate_log_probability(X, F, B, s)+np.log(A)))
 
     if not use_MAP:
-        elbo = np.sum(q * (log_joint_distribution - np.log(q)))
         return elbo
     else:
         raise NotImplementedError()
@@ -132,6 +131,76 @@ def run_e_step(X, F, B, s, A, use_MAP=False):
         raise NotImplementedError()
 
 
+def update_A(q, use_map=False):
+    if not use_map:
+        num = np.sum(q, axis=-1)
+        return num / np.sum(num)
+    else:
+        raise NotImplementedError("Update A with use_map set True still no implemented")
+
+
+def update_F(q, X, use_map=False):
+    den = np.sum(q)
+
+    f_k_list = []
+    for k in range(X.shape[-1]):
+        # q_k(d_ij)
+        x_k = X[:, :, k]
+        q_k = q[:, :, k]
+        f_k_list.append(correlate(x_k, q_k, mode="valid", method="fft"))
+
+    f_ = sum(f_k_list)
+
+    if not use_map:
+        return f_ / den
+    else:
+        raise NotImplementedError("Update face matrix with use_map set True still no implemented")
+
+
+def update_B(q, X, h, w, use_map=False):
+    b_num = 0
+    den = 0
+
+    for k in range(q.shape[2]):
+        for i in range(q.shape[0]):
+            for j in range(q.shape[1]):
+                q_kij = q[i, j, k]
+                # update numerator
+                X_ = np.copy(X)
+                x_k = X_[:, :, k]
+                x_k[i:i+h, j:j+w] = 0
+                b_num += q_kij * x_k
+
+                # update denominator
+                mask = np.ones_like(x_k)
+                mask[i:i+h, j:j+w] = 0
+                den += q_kij*mask
+
+    if not use_map:
+        return b_num / den
+    else:
+        raise NotImplementedError("Update background matrix with use_map set True still no implemented")
+
+
+def update_s(q, X, F, B, h, w, use_map=False):
+    den = X.size
+    num = 0
+
+    for k in range(q.shape[2]):
+        for i in range(q.shape[0]):
+            for j in range(q.shape[1]):
+                q_kij = q[i, j, k]
+                x_k = X[:, :, k]
+                means = np.copy(B)
+                means[i:i+h, j:j+w] = np.copy(F)
+                num += q_kij * np.sum((x_k - means) ** 2)
+
+    if not use_map:
+        return math.sqrt(num / den)
+    else:
+        raise NotImplementedError("Update s^2 matrix with use_map set True still no implemented")
+
+
 def run_m_step(X, q, h, w, use_MAP=False):
     """
     Estimates F, B, s, A given estimate of posteriors defined by q.
@@ -166,7 +235,12 @@ def run_m_step(X, q, h, w, use_MAP=False):
     A : array, shape (H-h+1, W-w+1)
         Estimate of prior on displacement of face in any image.
     """
-    pass
+    A = update_A(q, use_MAP)
+    F = update_F(q, X, use_MAP)
+    B = update_B(q, X, h, w, use_MAP)
+    s = update_s(q, X, F, B, h, w, use_MAP)
+
+    return F, B, s, A
 
 
 def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
@@ -207,7 +281,32 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
         L(q,F,B,s,A) after each EM iteration (1 iteration = 1 e-step + 1 m-step); 
         number_of_iters is actual number of iterations that was done.
     """
-    pass
+    x_max = np.max(X)
+    H, W = X.shape[0], X.shape[1]
+
+    F = x_max*np.abs(np.random.randn(h, w)) if F is None else F
+    B = x_max*np.abs(np.random.randn(H, W)) if B is None else B
+    s = np.std(X[:, :, 0]) if s is None else s
+    A = np.random.rand(H-h+1, W-w+1) if A is None else A
+    A = A / np.sum(A)
+    q = run_e_step(X, F, B, s, A, use_MAP)
+
+    i = 0
+
+    elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+    elbo_prev = -np.inf
+    LL = []
+
+    while elbo - elbo_prev > tolerance and i < max_iter:
+        q = run_e_step(X, F, B, s, A, use_MAP)
+        F, B, s, A = run_m_step(X, q, h, w, use_MAP)
+        LL.append((q, F, B, s, A))
+        elbo_prev = elbo
+        elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+        print("Iteration number " + i + ", ELBO: " + elbo)
+
+    print("Training ended")
+    return LL
 
 
 def run_EM_with_restarts(X, h, w, tolerance=0.001, max_iter=50, use_MAP=False,
