@@ -177,16 +177,23 @@ def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
     return signal.fftconvolve(x1, q_, mode=mode, axes=axes)
 
 
-def update_F(q, X, use_map=False):
+def update_F(q, X, use_map=False, h=None, w=None):
     den = X.shape[-1]
 
-    f_ = correlate_across_axes(X, q, mode="valid", axes=(0, 1))
-    f_ = np.sum(f_, axis=-1)
-
     if not use_map:
+        f_ = correlate_across_axes(X, q, mode="valid", axes=(0, 1))
+        f_ = np.sum(f_, axis=-1)
+
         return f_ / den
     else:
-        raise NotImplementedError("Update face matrix with use_map set True still no implemented")
+        assert h is not None and w is not None, "Specify h and w"
+
+        faces = []
+        for k in range(den):
+            i, j = q[:, k]
+            faces.append(X[i:i+h, j:j+w, k])
+
+        return np.sum(faces, axis=-1) / den
 
 
 def update_B(q, X, h, w, use_map=False):
@@ -282,9 +289,9 @@ def run_m_step(X, q, h, w, use_MAP=False):
     H, W, K = X.shape
     dh = H - h + 1
     dw = W - w + 1
-    
+
     A = update_A(q, use_MAP, dh, dw)
-    F = update_F(q, X, use_MAP)
+    F = update_F(q, X, use_MAP, h, w)
     B = update_B(q, X, h, w, use_MAP)
     s = update_s(q, X, F, B, h, w, use_MAP)
 
