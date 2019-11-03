@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 from scipy import signal
-from scipy.signal import fftconvolve, correlate
+from scipy.signal import fftconvolve
 
 
 def calculate_log_probability(X, F, B, s):
@@ -77,7 +77,8 @@ def calculate_lower_bound(X, F, B, s, A, q, use_MAP=False):
     L : float
         The lower bound L(q,F,B,s,A) for the marginal log likelihood.
     """
-    elbo = np.sum(q*(calculate_log_probability(X, F, B, s)+np.log(A)))
+    elbo = np.sum(q*(calculate_log_probability(X, F, B, s) + np.expand_dims(np.log(A+1e-10), axis=-1)))
+    elbo -= np.sum(np.log(q+1e-10) * q)
 
     if not use_MAP:
         return elbo
@@ -117,7 +118,7 @@ def run_e_step(X, F, B, s, A, use_MAP=False):
             q[1,k] - MAP estimates of dw for X_k
     """
     log_likelihood = calculate_log_probability(X, F, B, s)
-    log_prior = np.expand_dims(np.log(A), axis=-1)
+    log_prior = np.expand_dims(np.log(A+1e-10), axis=-1)
 
     # shape (H-h+1, W-w+1, K)
     log_aposteriory_estimation = log_likelihood + log_prior
@@ -318,7 +319,9 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
         LL.append((q, F, B, s, A))
         elbo_prev = elbo
         elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
-        print("Iteration number " + i + ", ELBO: " + elbo)
+        print("s", s)
+        print("Iteration " + str(i) + "/" + str(max_iter) + ", ELBO: " + str(elbo))
+        i+=1
 
     print("Training ended")
     return LL
@@ -356,4 +359,18 @@ def run_EM_with_restarts(X, h, w, tolerance=0.001, max_iter=50, use_MAP=False,
     L : float
         The best L(q,F,B,s,A).
     """
-    pass
+    elbo_max = -np.inf
+    LL_max = None
+
+    for i in range(n_restarts):
+        print("Running " + str(i) + "'th restart")
+        F, B, s, A = run_EM(X, h, w, tolerance=tolerance, max_iter=max_iter, use_MAP=use_MAP)[-1]
+        q = run_e_step(X, F, B, s, A, use_MAP)
+        elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+
+        if elbo > elbo_max:
+            print("Got better results with elbo = " + str(elbo) + ", rewriting best result")
+            elbo_max = elbo
+            LL_max = (F, B, s, A)
+
+    return LL_max
