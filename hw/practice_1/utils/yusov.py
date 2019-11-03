@@ -161,20 +161,20 @@ def update_B(q, X, h, w, use_map=False):
     b_num = 0
     den = 0
 
-    for k in range(q.shape[2]):
-        for i in range(q.shape[0]):
-            for j in range(q.shape[1]):
-                q_kij = q[i, j, k]
-                # update numerator
-                X_ = np.copy(X)
-                x_k = X_[:, :, k]
-                x_k[i:i+h, j:j+w] = 0
-                b_num += q_kij * x_k
+    for i in range(q.shape[0]):
+        for j in range(q.shape[1]):
+            q_kij = q[i, j, :].reshape(1, 1, -1)  # shape = [1, 1, -1]
+            # update numerator
+            X_ = np.copy(X)
+            X_[i:i+h, j:j+w, :] = 0
+            b_num += q_kij * X_
 
-                # update denominator
-                mask = np.ones_like(x_k)
-                mask[i:i+h, j:j+w] = 0
-                den += q_kij*mask
+            # update denominator
+            mask = np.ones_like(X_)
+            mask[i:i+h, j:j+w, :] = 0
+            den += np.sum(q_kij*mask, axis=-1)
+
+    b_num = np.sum(b_num, axis=-1)
 
     if not use_map:
         return b_num / den
