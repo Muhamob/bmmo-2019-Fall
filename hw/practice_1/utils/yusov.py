@@ -143,10 +143,13 @@ def update_A(q, use_map=False):
 def update_F(q, X, use_map=False):
     den = np.sum(q)
 
+    # flip axes to apply fftconvolve to given set of axis
+    # instead of using for-loop across third dimension and
+    # applying correlate function
     q_ = np.copy(q)
     q_ = np.flip(q_, axis=0)
     q_ = np.flip(q_, axis=1)
-    
+
     f_ = signal.fftconvolve(X, q_, mode="valid", axes=[0, 1])
     f_ = np.sum(f_, axis=-1)
 
@@ -162,7 +165,7 @@ def update_B(q, X, h, w, use_map=False):
 
     for i in range(q.shape[0]):
         for j in range(q.shape[1]):
-            q_kij = q[i, j, :].reshape(1, 1, -1)  # shape = [1, 1, -1]
+            q_kij = q[i, j, :]
             # update numerator
             X_ = np.copy(X)
             X_[i:i+h, j:j+w, :] = 0
@@ -185,14 +188,17 @@ def update_s(q, X, F, B, h, w, use_map=False):
     den = X.size
     num = 0
 
-    for k in range(q.shape[2]):
-        for i in range(q.shape[0]):
-            for j in range(q.shape[1]):
-                q_kij = q[i, j, k]
-                x_k = X[:, :, k]
-                means = np.copy(B)
-                means[i:i+h, j:j+w] = np.copy(F)
-                num += q_kij * np.sum((x_k - means) ** 2)
+    F_ = np.expand_dims(np.copy(F), axis=-1)
+    B_ = np.expand_dims(np.copy(B), axis=-1)
+
+    for i in range(q.shape[0]):
+        for j in range(q.shape[1]):
+            q_kij = q[i, j, :]
+
+            means = B_
+            means[i:i+h, j:j+w, :] = F_
+
+            num += np.sum(q_kij * np.sum((X - means) ** 2, axis=(0, 1)))
 
     if not use_map:
         return math.sqrt(num / den)
