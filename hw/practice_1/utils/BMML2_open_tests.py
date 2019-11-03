@@ -94,6 +94,7 @@ def check_m_step_time(use_MAP=False):
     t_start = time.perf_counter()
     model.run_m_step(X, q, h, w, use_MAP=use_MAP)
     computation_time = time.perf_counter() - t_start
+    print(f"{computation_time}")
     assert computation_time < 1, f"{computation_time}"
 
 

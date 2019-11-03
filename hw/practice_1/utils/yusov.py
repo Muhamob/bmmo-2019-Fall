@@ -149,7 +149,7 @@ def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
 
 
 def update_F(q, X, use_map=False):
-    den = np.sum(q)
+    den = X.shape[-1]
 
     f_ = correlate_across_axes(X, q, mode="valid", axes=(0, 1))
     f_ = np.sum(f_, axis=-1)
@@ -161,26 +161,35 @@ def update_F(q, X, use_map=False):
 
 
 def update_B(q, X, h, w, use_map=False):
-    b_num = 0
-    den = 0
+    # b_num = 0
+    # den = 0
 
-    for i in range(q.shape[0]):
-        for j in range(q.shape[1]):
-            q_kij = q[i, j, :]
-            # update numerator
-            X_ = np.copy(X)
-            X_[i:i+h, j:j+w, :] = 0
-            b_num += q_kij * X_
+    nq = 1 - fftconvolve(np.ones((h, w, 1)), q, mode="full", axes=(0, 1))
+    num_ = np.sum(X * nq, axis=-1)
+    den = np.sum(nq, axis=-1)
 
-            # update denominator
-            mask = np.ones_like(X_)
-            mask[i:i+h, j:j+w, :] = 0
-            den += np.sum(q_kij*mask, axis=-1)
+    indices = np.where(den != 0)
+    B = np.zeros_like(X[:, :, 0])
+    B[indices] = num_[indices] / den[indices]
 
-    b_num = np.sum(b_num, axis=-1)
+    # for i in range(q.shape[0]):
+    #     for j in range(q.shape[1]):
+    #         q_kij = q[i, j, :]
+    #         # update numerator
+    #         X_ = np.copy(X)
+    #         X_[i:i+h, j:j+w, :] = 0
+    #         b_num += q_kij * X_
+    #
+    #         # update denominator
+    #         mask = np.ones_like(X_)
+    #         mask[i:i+h, j:j+w, :] = 0
+    #         den += np.sum(q_kij*mask, axis=-1)
+    #
+    # b_num = np.sum(b_num, axis=-1)
 
     if not use_map:
-        return b_num / den
+        # return b_num / den
+        return B
     else:
         raise NotImplementedError("Update background matrix with use_map set True still no implemented")
 
