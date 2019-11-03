@@ -164,7 +164,6 @@ def update_A(q, use_MAP=False, dh=None, dw=None):
     else:
         assert dh is not None and dw is not None, "Specify dh and dw"
         A = np.zeros((dh, dw))
-        print(q)
         A[q[0, :], q[1, :]] = 1
         return A
 
@@ -197,37 +196,25 @@ def update_F(q, X, use_map=False, h=None, w=None):
 
 
 def update_B(q, X, h, w, use_map=False):
-    # b_num = 0
-    # den = 0
+    H, W, K = X.shape
 
-    nq = 1 - fftconvolve(np.ones((h, w, 1)), q, mode="full", axes=(0, 1))
+    if not use_map:
+        dh = H - h + 1
+        dw = W - w + 1
+        q_ = np.zeros((dh, dw))
+        q_[q[0, :], q[1, :]] = 1
+    else:
+        q_ = q
+
+    nq = 1 - fftconvolve(np.ones((h, w, 1)), q_, mode="full", axes=(0, 1))
     num_ = np.sum(X * nq, axis=-1)
     den = np.sum(nq, axis=-1)
 
     indices = np.where(den != 0)
     B = np.zeros_like(X[:, :, 0])
     B[indices] = num_[indices] / den[indices]
+    return B
 
-    # for i in range(q.shape[0]):
-    #     for j in range(q.shape[1]):
-    #         q_kij = q[i, j, :]
-    #         # update numerator
-    #         X_ = np.copy(X)
-    #         X_[i:i+h, j:j+w, :] = 0
-    #         b_num += q_kij * X_
-    #
-    #         # update denominator
-    #         mask = np.ones_like(X_)
-    #         mask[i:i+h, j:j+w, :] = 0
-    #         den += np.sum(q_kij*mask, axis=-1)
-    #
-    # b_num = np.sum(b_num, axis=-1)
-
-    if not use_map:
-        # return b_num / den
-        return B
-    else:
-        raise NotImplementedError("Update background matrix with use_map set True still no implemented")
 
 
 def update_s(q, X, F, B, h, w, use_map=False):
