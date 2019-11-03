@@ -140,17 +140,18 @@ def update_A(q, use_map=False):
         raise NotImplementedError("Update A with use_map set True still no implemented")
 
 
+def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
+    q_ = np.copy(x2)
+    q_ = np.flip(q_, axis=axes[0])
+    q_ = np.flip(q_, axis=axes[1])
+
+    return signal.fftconvolve(x1, q_, mode=mode, axes=axes)
+
+
 def update_F(q, X, use_map=False):
     den = np.sum(q)
 
-    # flip axes to apply fftconvolve to given set of axis
-    # instead of using for-loop across third dimension and
-    # applying correlate function
-    q_ = np.copy(q)
-    q_ = np.flip(q_, axis=0)
-    q_ = np.flip(q_, axis=1)
-
-    f_ = signal.fftconvolve(X, q_, mode="valid", axes=[0, 1])
+    f_ = correlate_across_axes(X, q, mode="valid", axes=(0, 1))
     f_ = np.sum(f_, axis=-1)
 
     if not use_map:
