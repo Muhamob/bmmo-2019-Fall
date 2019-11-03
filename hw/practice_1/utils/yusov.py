@@ -134,7 +134,12 @@ def run_e_step(X, F, B, s, A, use_MAP=False):
     if not use_MAP:
         return q
     else:
-        raise NotImplementedError()
+        K = X.shape[-1]
+        q_ = np.empty((2, K))
+        for k in range(K):
+            indices = np.unravel_index(np.argmax(q[:, :, k], axis=None), q.shape[:2])
+            q_[:, k] = indices
+        return q_
 
 
 def update_A(q, use_map=False):
