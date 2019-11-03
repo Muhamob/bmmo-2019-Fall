@@ -198,7 +198,7 @@ def update_F(q, X, use_map=False, h=None, w=None):
 def update_B(q, X, h, w, use_map=False):
     H, W, K = X.shape
 
-    if not use_map:
+    if use_map:
         dh = H - h + 1
         dw = W - w + 1
         q_ = np.zeros((dh, dw))
@@ -218,15 +218,25 @@ def update_B(q, X, h, w, use_map=False):
 
 
 def update_s(q, X, F, B, h, w, use_map=False):
-    den = X.size
+    H, W, den = X.size
+    K = den
     num = 0
 
     F_ = np.expand_dims(np.copy(F), axis=-1)
     B_ = np.expand_dims(np.copy(B), axis=-1)
 
-    for i in range(q.shape[0]):
-        for j in range(q.shape[1]):
-            q_kij = q[i, j, :]
+    if use_map:
+        dh = H - h + 1
+        dw = W - w + 1
+        q_ = np.zeros((dh, dw))
+        q_[q[0, :], q[1, :]] = 1
+    else:
+        q_ = q
+
+
+    for i in range(q_.shape[0]):
+        for j in range(q_.shape[1]):
+            q_kij = q_[i, j, :]
 
             means = B_
             means[i:i+h, j:j+w, :] = F_
