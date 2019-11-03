@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from scipy import signal
 from scipy.signal import fftconvolve, correlate
 
 
@@ -142,14 +143,12 @@ def update_A(q, use_map=False):
 def update_F(q, X, use_map=False):
     den = np.sum(q)
 
-    f_k_list = []
-    for k in range(X.shape[-1]):
-        # q_k(d_ij)
-        x_k = X[:, :, k]
-        q_k = q[:, :, k]
-        f_k_list.append(correlate(x_k, q_k, mode="valid", method="fft"))
-
-    f_ = sum(f_k_list)
+    q_ = np.copy(q)
+    q_ = np.flip(q_, axis=0)
+    q_ = np.flip(q_, axis=1)
+    
+    f_ = signal.fftconvolve(X, q_, mode="valid", axes=[0, 1])
+    f_ = np.sum(f_, axis=-1)
 
     if not use_map:
         return f_ / den
