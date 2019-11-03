@@ -142,12 +142,31 @@ def run_e_step(X, F, B, s, A, use_MAP=False):
         return q_
 
 
-def update_A(q, use_map=False):
-    if not use_map:
+def update_A(q, use_MAP=False, dh=None, dw=None):
+    """
+    Make one step of updating matrix of priors on face location
+    :param dh: H-h+1, used only with MAP-EM
+    :param dw: W-w+1, used only with MAP-EM
+    :param q: array
+        If use_MAP = False: shape (H-h+1, W-w+1, K)
+            q[dh,dw,k] - estimate of posterior of displacement (dh,dw)
+            of villain's face given image Xk
+        If use_MAP = True: shape (2, K)
+            q[0,k] - MAP estimates of dh for X_k
+            q[1,k] - MAP estimates of dw for X_k
+    :param use_map:
+    :return: array, shape (H-h+1, W-w+1)
+        Estimate of prior on displacement of face in any image.
+    """
+    if not use_MAP:
         num = np.sum(q, axis=-1)
         return num / np.sum(num)
     else:
-        raise NotImplementedError("Update A with use_map set True still no implemented")
+        assert dh is not None and dw is not None, "Specify dh and dw"
+        A = np.zeros((dh, dw))
+        print(q)
+        A[q[0, :], q[1, :]] = 1
+        return A
 
 
 def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
@@ -260,7 +279,11 @@ def run_m_step(X, q, h, w, use_MAP=False):
     A : array, shape (H-h+1, W-w+1)
         Estimate of prior on displacement of face in any image.
     """
-    A = update_A(q, use_MAP)
+    H, W, K = X.shape
+    dh = H - h + 1
+    dw = W - w + 1
+    
+    A = update_A(q, use_MAP, dh, dw)
     F = update_F(q, X, use_MAP)
     B = update_B(q, X, h, w, use_MAP)
     s = update_s(q, X, F, B, h, w, use_MAP)
