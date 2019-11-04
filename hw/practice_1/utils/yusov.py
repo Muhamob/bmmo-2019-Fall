@@ -85,8 +85,13 @@ def calculate_lower_bound(X, F, B, s, A, q, use_MAP=False):
         elbo = np.sum(q*log_p) - np.sum(np.log(q+1e-10) * q)
         return elbo
     else:
-        log_p = log_p[q[0, :], q[1, :], :]
-        elbo = np.sum(log_p)
+        K = X.shape[-1]
+        elbo = 0
+
+        for k in range(K):
+            i, j = list(map(lambda x: int(x), q[:, k]))
+            elbo += log_p[i, j, k]
+
         return elbo
 
 
@@ -163,9 +168,9 @@ def update_A(q, use_MAP=False, dh=None, dw=None):
         return num / np.sum(num)
     else:
         assert dh is not None and dw is not None, "Specify dh and dw"
-        A = np.zeros((dh, dw))
-        A[q[0, :], q[1, :]] = 1
-        return A
+        K = q.shape[-1]
+        q_ = make_q_from_MAP(q, dh, dw, K)
+        return np.mean(q_, axis=-1)
 
 
 def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
@@ -187,12 +192,21 @@ def update_F(q, X, use_map=False, h=None, w=None):
     else:
         assert h is not None and w is not None, "Specify h and w"
 
-        faces = []
+        face = 0
         for k in range(den):
-            i, j = q[:, k]
-            faces.append(X[i:i+h, j:j+w, k])
+            i, j = list(map(lambda x: int(x), q[:, k]))
+            face += X[i:i+h, j:j+w, k]
 
-        return np.sum(faces, axis=-1) / den
+        return face / den
+
+
+def make_q_from_MAP(q, dh, dw, K):
+    q_ = np.zeros((dh, dw, K))
+    for k in range(K):
+        i, j = list(map(lambda x: int(x), q[:, k]))
+        q_[i, j, k] = 1
+
+    return q_
 
 
 def update_B(q, X, h, w, use_map=False):
@@ -201,8 +215,7 @@ def update_B(q, X, h, w, use_map=False):
     if use_map:
         dh = H - h + 1
         dw = W - w + 1
-        q_ = np.zeros((dh, dw))
-        q_[q[0, :], q[1, :]] = 1
+        q_ = make_q_from_MAP(q, dh, dw, K)
     else:
         q_ = q
 
@@ -216,10 +229,9 @@ def update_B(q, X, h, w, use_map=False):
     return B
 
 
-
 def update_s(q, X, F, B, h, w, use_map=False):
-    H, W, den = X.size
-    K = den
+    H, W, K = X.shape
+    den = X.size
     num = 0
 
     F_ = np.expand_dims(np.copy(F), axis=-1)
@@ -228,8 +240,7 @@ def update_s(q, X, F, B, h, w, use_map=False):
     if use_map:
         dh = H - h + 1
         dw = W - w + 1
-        q_ = np.zeros((dh, dw))
-        q_[q[0, :], q[1, :]] = 1
+        q_ = make_q_from_MAP(q, dh, dw, K)
     else:
         q_ = q
 
@@ -243,10 +254,7 @@ def update_s(q, X, F, B, h, w, use_map=False):
 
             num += np.sum(q_kij * np.sum((X - means) ** 2, axis=(0, 1)))
 
-    if not use_map:
-        return math.sqrt(num / den)
-    else:
-        raise NotImplementedError("Update s^2 matrix with use_map set True still no implemented")
+    return math.sqrt(num / den)
 
 
 def run_m_step(X, q, h, w, use_MAP=False):
@@ -289,6 +297,7 @@ def run_m_step(X, q, h, w, use_MAP=False):
 
     A = update_A(q, use_MAP, dh, dw)
     F = update_F(q, X, use_MAP, h, w)
+    print(F.shape)
     B = update_B(q, X, h, w, use_MAP)
     s = update_s(q, X, F, B, h, w, use_MAP)
 
