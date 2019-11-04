@@ -233,7 +233,6 @@ def update_s(q, X, F, B, h, w, use_map=False):
     num = 0
 
     F_ = np.expand_dims(np.copy(F), axis=-1)
-    B_ = np.expand_dims(np.copy(B), axis=-1)
 
     if use_map:
         dh = H - h + 1
@@ -242,11 +241,11 @@ def update_s(q, X, F, B, h, w, use_map=False):
     else:
         q_ = q
 
-
     for i in range(q_.shape[0]):
         for j in range(q_.shape[1]):
             q_kij = q_[i, j, :]
 
+            B_ = np.expand_dims(np.copy(B), axis=-1)
             means = B_
             means[i:i+h, j:j+w, :] = F_
 
@@ -340,7 +339,7 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
         number_of_iters is actual number of iterations that was done.
     """
     x_max = np.max(X)
-    H, W = X.shape[0], X.shape[1]
+    H, W, K = X.shape
 
     F = x_max*np.abs(np.random.randn(h, w)) if F is None else F
     B = x_max*np.abs(np.random.randn(H, W)) if B is None else B
@@ -350,7 +349,6 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
     q = run_e_step(X, F, B, s, A, use_MAP)
 
     i = 0
-
     elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
     elbo_prev = -np.inf
     LL = []
@@ -362,6 +360,7 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
         elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
         LL.append(elbo)
         i += 1
+        # print("iter", i, "out of", max_iter, "elbo normalized", elbo / K, "elbo diff", elbo - elbo_prev)
 
     return F, B, s, A, LL
 
