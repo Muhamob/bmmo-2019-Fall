@@ -1,0 +1,51 @@
+\documentclass[unicode]{article}
+
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage[colorlinks,urlcolor=blue]{hyperref}
+\usepackage{import}
+
+\textheight=24cm
+\textwidth=18cm
+\oddsidemargin=-1cm
+\topmargin=-2.5cm
+\sloppy
+
+\newcounter{example}
+
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+{\mbox{\boldmath$\textstyle#1$}} {\mbox{\boldmath$\scriptstyle#1$}} {\mbox{\boldmath$\scriptscriptstyle#1$}}}
+
+\newcommand{\tr}{\mathop{\mathrm{tr}}\limits}
+
+\DeclareMathOperator{\R}{U}
+\DeclareMathOperator{\B}{Beta}
+\DeclareMathOperator{\Par}{Pareto}
+
+\renewcommand{\labelitemi}{$-$}
+
+\pagestyle{empty}
+
+\begin{document}
+	E-шаг:
+	\import{./}{update_q.tex}
+	
+	M-шаг:
+	
+	Правило обновления априорного распределения на положение лица подозреваемого
+	\import{./}{update_A.tex}
+	
+	Правило обновления матрицы средних для лица подозреваемого
+	\import{./}{update_F.tex}
+	
+	Правило обновления матрицы средних для фона
+	\import{./}{update_B.tex}
+	
+	Правило обновления s
+	\import{./}{update_s.tex}
+\end{document}

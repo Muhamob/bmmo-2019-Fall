@@ -1,0 +1,7 @@
+\begin{gather*}
+	\begin{cases}
+		\dfrac{\partial \mathcal{L}}{\partial A_{ml}} = \sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) \dfrac{1}{A_{ij}} [(i,j) = (m, l)] + \lambda = \sum_{k=1}^{K} q_k(A_{ml}) \dfrac{1}{A_{ml}} + \lambda = 0 \\
+		\dfrac{\partial \mathcal{L}}{\partial \lambda} = \sum_{i, j} A_{ij} - 1 = 0
+	\end{cases}\\	
+	\rightarrow A_{ml} = \dfrac{\sum_{k} q_k (A_{ml})}{\sum_{i, j, k} q_k(A_{ij})} = \dfrac{\sum_{k} q_k (A_{ml})}{K}
+\end{gather*} 

@@ -1,0 +1,7 @@
+\begin{gather*}
+	\dfrac{\partial \mathcal{L}}{\partial s} = \sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) \dfrac{\partial \log p(X_k | d_{ij}, \theta)}{\partial s} = 0 \\
+	\dfrac{\partial \log p(X_k | d_{ij}, \theta)}{\partial s} = \dfrac{\partial}{\partial s} \bigg[ -HW \log s - \dfrac{1}{2s^2} \bigl\{ \sum_{p, q =0}^{h, w} (X^k_{(i+p, j+q)} - F_{pq})^2 + \sum_{p, q =0}^{H, W} (X^k_{pq} - B_{pq})^2[(p, q) \in Bg(i, j)] \bigr\} \bigg] = \\
+	- \dfrac{HW}{s} + \dfrac{1}{s^3} \biggl\{ ... \biggr\} \\
+	\dfrac{1}{s^2} \sum_{k, i, j} q_k(d_{ij})\{...\} = HWK \\
+	\rightarrow	s^2 = \dfrac{\sum_{k, i, j} q_k(d_{ij})\{\sum_{p, q =0}^{h, w} (X^k_{(i+p, j+q)} - F_{pq})^2 + \sum_{p, q =0}^{H, W} (X^k_{pq} - B_{pq})^2[(p, q) \in Bg(i, j)]\}}{HWK}
+\end{gather*}

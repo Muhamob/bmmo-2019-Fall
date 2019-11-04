@@ -1,0 +1,5 @@
+\begin{gather*}
+	\dfrac{\partial \mathcal{L}}{\partial B_{ml}} = \sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) \dfrac{\partial \log p(X_k | d_{ij}, \theta)}{\partial B_{ml}} = 0\\
+	\dfrac{\partial \log p(X_k | d_{ij}, F, B, s)}{\partial B_{ml}} = -\dfrac{1}{2 s^2} \dfrac{\partial}{\partial B_{ml}} \bigg\{ \sum_{index \in Face} (X_{index}^k - F_{index})^2 + \sum_{index \in Bg(i, j)} (X_{index}^k - B_{index})^2 \bigg\} = \\ \dfrac{1}{s^2} (X_{ml}^k - B_{ml})[(m, l) \in Bg(i, j)] \\	
+	\rightarrow B_{ml} = \dfrac{\sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) X_{ml}^k[(m, l) \in Bg(i, j)]}{\sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij})[(m, l) \in Bg(i, j)]}
+\end{gather*}

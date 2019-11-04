@@ -1,0 +1,7 @@
+\begin{gather*}
+	q(d_k) = p(d_k | X_k, \theta, A) = \dfrac{p(X_k, d_k | \theta, A)}{\sum_{i, j = 0}^{(H-h+1, W-w+1)} p(X_k, (i, j) | \theta, A)} \\
+	p(X_k, d_k | \theta, A) = p(X_k | d_k, \theta) p(d_k| A) \\
+	\log p(X_k, d_k | \theta, A) = \log p(X_k | d_k, \theta) + \log p(d_k| A) = \alpha_{k}^{d_k}\\
+	p(X_k, d_k | \theta, A) = p(X_k | d_k, \theta) p(d_k| A) = \exp(\alpha_{k}^{d_k})\\
+	\rightarrow q(d_k) = \dfrac{\exp(\alpha_{k}^{d_k})}{\sum_{i, j = 0}^{(H-h+1, W-w+1)} \exp(\alpha_{k}^{(i, j)})} = \dfrac{\exp(\alpha_{k}^{d_k} - \alpha_{max})}{\sum_{i, j = 0}^{(H-h+1, W-w+1)} \exp(\alpha_{k}^{(i, j)} - \alpha_{max})}
+\end{gather*}
