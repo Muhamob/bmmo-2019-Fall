@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 from scipy import signal
 from scipy.signal import fftconvolve
@@ -41,7 +39,7 @@ def calculate_log_probability(X, F, B, s):
             under_exponent = + (-1. / (2 * s ** 2)) * (X - np.expand_dims(B_, axis=-1)) ** 2
             ll[i, j] = np.sum(under_exponent, axis=(0, 1))
 
-    ll -= H*W*(0.5 * math.log(2 * math.pi) + math.log(s))
+    ll -= H*W*(0.5 * np.log(2 * np.pi) + np.log(s))
     return ll
 
 
@@ -254,7 +252,7 @@ def update_s(q, X, F, B, h, w, use_map=False):
 
             num += np.sum(q_kij * np.sum((X - means) ** 2, axis=(0, 1)))
 
-    return math.sqrt(num / den)
+    return np.sqrt(num / den)
 
 
 def run_m_step(X, q, h, w, use_MAP=False):
@@ -297,7 +295,6 @@ def run_m_step(X, q, h, w, use_MAP=False):
 
     A = update_A(q, use_MAP, dh, dw)
     F = update_F(q, X, use_MAP, h, w)
-    print(F.shape)
     B = update_B(q, X, h, w, use_MAP)
     s = update_s(q, X, F, B, h, w, use_MAP)
 
@@ -361,15 +358,12 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
     while elbo - elbo_prev > tolerance and i < max_iter:
         q = run_e_step(X, F, B, s, A, use_MAP)
         F, B, s, A = run_m_step(X, q, h, w, use_MAP)
-        LL.append((q, F, B, s, A))
         elbo_prev = elbo
         elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
-        print("s", s)
-        print("Iteration " + str(i) + "/" + str(max_iter) + ", ELBO: " + str(elbo))
-        i+=1
+        LL.append(elbo)
+        i += 1
 
-    print("Training ended")
-    return LL
+    return F, B, s, A, LL
 
 
 def run_EM_with_restarts(X, h, w, tolerance=0.001, max_iter=50, use_MAP=False,
@@ -405,17 +399,16 @@ def run_EM_with_restarts(X, h, w, tolerance=0.001, max_iter=50, use_MAP=False,
         The best L(q,F,B,s,A).
     """
     elbo_max = -np.inf
-    LL_max = None
+    params_max = None
 
     for i in range(n_restarts):
-        print("Running " + str(i) + "'th restart")
-        F, B, s, A = run_EM(X, h, w, tolerance=tolerance, max_iter=max_iter, use_MAP=use_MAP)[-1]
-        q = run_e_step(X, F, B, s, A, use_MAP)
-        elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+        F, B, s, A, LL = run_EM(X, h, w, tolerance=tolerance, max_iter=max_iter, use_MAP=use_MAP)
+        # q = run_e_step(X, F, B, s, A, use_MAP)
+        # elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+        elbo = LL[-1]
 
         if elbo > elbo_max:
-            print("Got better results with elbo = " + str(elbo) + ", rewriting best result")
             elbo_max = elbo
-            LL_max = (F, B, s, A)
+            params_max = (F, B, s, A, LL)
 
-    return LL_max
+    return params_max
