@@ -108,7 +108,7 @@ def test_e_step():
     check_e_step(use_MAP=True)
 
 
-def test_m_stap():
+def test_m_step():
     check_m_step()
     check_m_step(use_MAP=True)
 
