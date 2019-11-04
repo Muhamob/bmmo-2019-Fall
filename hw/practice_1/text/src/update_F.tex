@@ -4,7 +4,12 @@
 	\dfrac{\partial \mathcal{L}}{\partial F_{ml}} = \sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) (X_{(i+m, j+l)}^k - F_{ml}) = 0 \\
 	\rightarrow F_{ml} = \dfrac{\sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) X_{(i+m, j+l)}^k}{\sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij})} = \dfrac{\sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) X_{(i+m, j+l)}^k}{K}
 \end{gather*}
-В векторном виде:
+в векторном виде:
 \begin{gather*}
 	F = \dfrac{\sum_k correlation(q_k, X^k)}{K}
+\end{gather*}
+где,
+\begin{gather*}
+correlation(x, y) = \bar{x}*y,\\
+\bar{x}_{ij} = x_{dh-i, dw-j}
 \end{gather*}

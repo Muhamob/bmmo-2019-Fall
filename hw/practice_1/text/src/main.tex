@@ -32,20 +32,11 @@
 \pagestyle{empty}
 
 \begin{document}
-	E-шаг:
-	\import{./}{update_q.tex}
+	\section{Вывод формул}
 	
-	M-шаг:
-	
-	Правило обновления априорного распределения на положение лица подозреваемого
-	\import{./}{update_A.tex}
-	
-	Правило обновления матрицы средних для лица подозреваемого
-	\import{./}{update_F.tex}
-	
-	Правило обновления матрицы средних для фона
-	\import{./}{update_B.tex}
-	
-	Правило обновления s
-	\import{./}{update_s.tex}
+		\subsection{E-шаг}
+		\import{./}{e_step.tex}
+		
+		\subsection{M-шаг}
+		\import{./}{m_step_base.tex}
 \end{document}

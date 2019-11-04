@@ -1,0 +1,23 @@
+На М-шаге алгоритма вычисляется точечная оценка на параметры $\theta, A$:
+\begin{gather*}
+\mathop{\mathbb{E}}_{q(d)} \log p(X, d| \theta, A) \rightarrow \max_{\theta, A}
+\end{gather*}
+
+Можно расписать его в более удобном для дальнейших вычислений виде:
+
+\begin{gather*}
+\mathop{\mathbb{E}}_{q(d)} \log p(X, d| \theta, A) = \mathop{\mathbb{E}}_{q(d)} \sum_k \log p(X_k, d_k| \theta, A) = \sum_k \mathop{\mathbb{E}}_{q_k(d_k)} \log p(X_k, d_k| \theta, A)\\
+= \sum_k \mathop{\mathbb{E}}_{q_k(d_k)} \big[ \log p(X_k| d, \theta) + \log p(d|A) \big] = \sum_{k=1}^{K} \sum_{i=0}^{H-h+1} \sum_{j=0}^{W-w+1} q_k(d_{ij}) \big[ \log p(X_k| d_ij, \theta) + \log p(d_{ij}|A) \big] = \mathcal{L}(\theta, A)\\
+\end{gather*}
+
+\subsubsection{Шаг обновления апостериорного распределения положения лица}
+\import{./}{update_A.tex}
+
+\subsubsection{Шаг обновления матрицы средних для лица подозреваемого}
+\import{./}{update_F.tex}
+
+\subsubsection{Шаг обновления матрицы средних для фона}
+\import{./}{update_B.tex}
+
+\subsubsection{Шаг обновления s}
+\import{./}{update_s.tex}
