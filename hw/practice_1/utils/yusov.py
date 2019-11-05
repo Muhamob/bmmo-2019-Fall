@@ -356,11 +356,15 @@ def run_EM(X, h, w, F=None, B=None, s=None, A=None, tolerance=0.001,
     while elbo - elbo_prev > tolerance and i < max_iter:
         q = run_e_step(X, F, B, s, A, use_MAP)
         F, B, s, A = run_m_step(X, q, h, w, use_MAP)
-        elbo_prev = elbo
-        elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+
+        # run every 2 times
+        if i % 2 == 0:
+            elbo_prev = elbo
+            elbo = calculate_lower_bound(X, F, B, s, A, q, use_MAP)
+
         LL.append(elbo)
         i += 1
-        # print("iter", i, "out of", max_iter, "elbo normalized", elbo / K, "elbo diff", elbo - elbo_prev)
+        print("iter", i, "out of", max_iter, "elbo normalized", elbo / K, "elbo diff", elbo - elbo_prev)
 
     return F, B, s, A, LL
 

@@ -5,16 +5,19 @@
 \usepackage{color}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{graphics}
 \usepackage{epsfig}
 \usepackage[colorlinks,urlcolor=blue]{hyperref}
 \usepackage{import}
+\usepackage{graphicx}
+\usepackage{float}
+
+\graphicspath{ {../../imgs/} }
+
 
 \textheight=24cm
 \textwidth=18cm
 \oddsidemargin=-1cm
 \topmargin=-2.5cm
-\sloppy
 
 \newcounter{example}
 
@@ -39,4 +42,21 @@
 		
 		\subsection{M-шаг}
 		\import{./}{m_step_base.tex}
+		
+	\section{Анализ полученных результатов}
+		
+		\subsection{Влияние начального приближения на результаты}
+		\import{./}{analysis_1.tex}
+		
+		\subsection{Анализ алгоритма при разном уровне шума}
+		\import{./}{analysis_2.tex}
+		
+		\subsection{Поиск лица подозреваемого}
+		\import{./}{analysis_3.tex}
+		
+		\subsection{Сравнение качества EM и Hard-EM алгоритма}
+		\import{./}{analysis_4.tex}
+		
+		\subsection{Улучшения алгоритма}
+		\import{./}{analysis_5.tex}
 \end{document}

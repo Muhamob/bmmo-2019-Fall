@@ -1,0 +1,34 @@
+Для того, чтобы рассмотреть влияние начального приближения на результаты работы ЕМ алгоритма, сгенерируем выборку из $K=10$ картинок. Каждая картинка представляет собой лицо размером 24x24 пикселя наложенное на фон размером 40x60 пикселей в случайном месте
+\begin{figure}[H]
+	\label{fig:bg_example}
+	\includegraphics[width=8cm, height=6cm]{background4.png}
+	\centering
+	\caption{Картинка, использованная для фона изображения}
+\end{figure}
+\begin{figure}[H]
+	\label{fig:fg_example}
+	\includegraphics[width=6cm, height=6cm]{foreground5.png}
+	\centering
+	\caption{Картинка, использованная в качестве лица}
+\end{figure}
+EM алгоритм был запущен 10 раз с различными различными начальными приближений матриц средних для фона и лица. В результате работы алгоритма получаем данные картинки для фона и лица
+\begin{figure}[H]
+	\label{fig:background_estimates}
+	\includegraphics[width=\textwidth, height=6.5cm]{background_estimates.png}
+	\centering
+	\caption{Фон после восстановления для нескольких запусках}
+\end{figure}
+\begin{figure}[H]
+	\label{fig:einstein_estimates}
+	\includegraphics[width=\textwidth, height=6.5cm]{einstein_estimates.png}
+	\centering
+	\caption{Лица после восстановления для нескольких запусках}
+\end{figure}
+\begin{figure}[H]
+	\label{fig:losses}
+	\includegraphics[width=\textwidth, height=8.5cm]{losses.png}
+	\centering
+	\caption{Изменение ELBO от итерации для каждого из перезапусков}
+\end{figure}
+
+В целом, для фона разница заметна не сильно, однако оценки лица, полученные при различных запусках, меняются. В одних случаях лица получаются достаточно точными, в других же есть некоторое "размытие". Поэтому с большой уверенностью можно сказать, что необходимо запускать ЕМ алгоритм несколько раз, чтобы получить лучший результат. В дальнейших экспериментах алгоритм запускался с 3 перезапусками.
