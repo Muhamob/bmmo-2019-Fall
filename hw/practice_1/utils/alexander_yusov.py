@@ -176,7 +176,15 @@ def correlate_across_axes(x1, x2, mode="valid", axes=(0, 1)):
     q_ = np.flip(q_, axis=axes[0])
     q_ = np.flip(q_, axis=axes[1])
 
-    return signal.fftconvolve(x1, q_, mode=mode, axes=axes)
+    convolved = []
+
+    for k in range(q_.shape[-1]):
+        convolved.append(signal.fftconvolve(x1[:, :, k], q_[:, :, k], mode=mode))
+
+    return np.asarray(convolved)
+
+    # turns out, that older version of scipy doesn't have axes parameter in fftconvole
+    # return signal.fftconvolve(x1, q_, mode=mode, axes=axes)
 
 
 def update_F(q, X, use_map=False, h=None, w=None):
