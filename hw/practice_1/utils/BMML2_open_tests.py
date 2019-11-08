@@ -3,7 +3,7 @@ import time
 import numpy as np
 from nose.tools import ok_, eq_
 from numpy.testing import assert_almost_equal
-from . import yusov as model
+from . import alexander_yusov as model
 
 
 def test_python3():
