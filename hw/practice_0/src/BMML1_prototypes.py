@@ -44,56 +44,31 @@
 # all other inputs have the same format as earlier
 # Outputs:
 # d - generated values of d, numpy array of size (N,#a,#b)
-
-# In variant 1 the following functions are required:
-def pa(params, model):
-    
-def pb(params, model):
-    
-def pc(params, model):
-
-def pd(params, model):
-    
-def pc_a(a, params, model):
-
-def pc_b(b, params, model):
-    
-def pc_d(d, params, model):
-
-def pc_ab(a, b, params, model):
-    
-def pc_abd(a, b, d, params, model):
     
 # In variant 2 the following functions are required:
 def pa(params, model):
+    pass
     
 def pb(params, model):
+    pass
     
 def pc(params, model):
+    pass
 
 def pd(params, model):
+    pass
 
 def pc_a(a, params, model):
+    pass
 
 def pc_b(b, params, model):
+    pass
     
 def pb_a(a, params, model):
+    pass
 
 def pb_d(d, params, model):
+    pass
     
 def pb_ad(a, d, params, model):
-
-# In variant 3 the following functions are required:
-def pa(params, model):
-    
-def pb(params, model):
-    
-def pc(params, model):
-
-def pd(params, model):
-    
-def generate(N, a, b, params, model):
-    
-def pb_d(d, params, model):
-
-def pb_ad(a, d, params, model):
+    pass
